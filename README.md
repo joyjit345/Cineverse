@@ -194,5 +194,6 @@ Movie metadata, images, ratings, and related information are provided through [T
 This product uses the TMDB API but is not endorsed or certified by TMDB.
 
 ---
+## ⭐ Support
 
-\<p align="center">   \<b>🎬 CineVerse — Your Universe of Movies.\</b> \</p>
+If you find this project interesting or useful, consider giving the repository a ⭐ on GitHub!
