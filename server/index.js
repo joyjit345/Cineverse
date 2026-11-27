@@ -28,7 +28,7 @@ if (envResult.error) {
   console.error("Error loading .env file:", envResult.error.message);
 }
 
-// TEMPORARY ENVIRONMENT CHECK
+// Environment check (does not print secret values)
 console.log("Environment check:", {
   MONGO_URI: Boolean(process.env.MONGO_URI),
   JWT_SECRET: Boolean(process.env.JWT_SECRET),
@@ -67,7 +67,7 @@ if (!JWT_SECRET || JWT_SECRET.length < 32) {
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://cineverse-seven-gamma.vercel.app",
+  "https://cineverse-omega-seven.vercel.app",
 ];
 
 app.use(
@@ -89,7 +89,7 @@ app.get("/", (req, res) => {
   res.json({
     message: "Welcome to CineVerse API!",
     status: "Running successfully",
-    frontend: "https://cineverse-seven-gamma.vercel.app",
+    frontend: "https://cineverse-omega-seven.vercel.app",
   });
 });
 
@@ -729,7 +729,6 @@ async function startServer() {
       console.log(`CineVerse API running on port ${PORT}`);
       console.log(`Local API: http://localhost:${PORT}`);
     });
-
   } catch (error) {
     console.error("Server startup error:", error.message);
     process.exit(1);
