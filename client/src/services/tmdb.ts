@@ -1,6 +1,11 @@
 
 import type { Movie } from "../data/movies";
 
+// Backend API URL
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
+
 // TMDB Movie Interface
 interface TMDBMovie {
   id: number;
@@ -47,8 +52,14 @@ function formatMovie(
     poster: movie.poster_path
       ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
       : "https://placehold.co/500x750?text=No+Poster",
-    description: movie.overview || "No description available.",
+    description:
+      movie.overview || "No description available.",
   };
+}
+
+// Build complete backend URL
+function getApiUrl(endpoint: string): string {
+  return `${API_URL.replace(/\/+$/, "")}/${endpoint.replace(/^\/+/, "")}`;
 }
 
 // Reusable API fetching function
@@ -56,7 +67,7 @@ async function fetchMovies(
   endpoint: string,
   genreOverride?: string
 ): Promise<Movie[]> {
-  const response = await fetch(endpoint);
+  const response = await fetch(getApiUrl(endpoint));
 
   if (!response.ok) {
     throw new Error(
@@ -77,27 +88,27 @@ async function fetchMovies(
 
 // Popular Movies
 export function getPopularMovies(): Promise<Movie[]> {
-  return fetchMovies("/api/movies/popular");
+  return fetchMovies("/movies/popular");
 }
 
 // Trending Movies
 export function getTrendingMovies(): Promise<Movie[]> {
-  return fetchMovies("/api/movies/trending");
+  return fetchMovies("/movies/trending");
 }
 
 // Action Movies
 export function getActionMovies(): Promise<Movie[]> {
-  return fetchMovies("/api/movies/genre/28", "Action");
+  return fetchMovies("/movies/genre/28", "Action");
 }
 
 // Sci-Fi Movies
 export function getSciFiMovies(): Promise<Movie[]> {
-  return fetchMovies("/api/movies/genre/878", "Sci-Fi");
+  return fetchMovies("/movies/genre/878", "Sci-Fi");
 }
 
 // Drama Movies
 export function getDramaMovies(): Promise<Movie[]> {
-  return fetchMovies("/api/movies/genre/18", "Drama");
+  return fetchMovies("/movies/genre/18", "Drama");
 }
 
 // Movie Recommendations
@@ -105,7 +116,7 @@ export function getMovieRecommendations(
   movieId: number
 ): Promise<Movie[]> {
   return fetchMovies(
-    `/api/movies/${movieId}/recommendations`
+    `/movies/${movieId}/recommendations`
   );
 }
 
@@ -120,7 +131,9 @@ export async function searchMovies(
   }
 
   const response = await fetch(
-    `/api/movies/search?query=${encodeURIComponent(trimmedQuery)}`
+    getApiUrl(
+      `/movies/search?query=${encodeURIComponent(trimmedQuery)}`
+    )
   );
 
   if (!response.ok) {
@@ -171,7 +184,7 @@ export async function getMovieDetails(
   movieId: number
 ): Promise<MovieDetails> {
   const response = await fetch(
-    `/api/movies/${movieId}`
+    getApiUrl(`/movies/${movieId}`)
   );
 
   if (!response.ok) {
@@ -186,7 +199,7 @@ export async function getMovieTrailer(
   movieId: number
 ): Promise<string | null> {
   const response = await fetch(
-    `/api/movies/${movieId}/videos`
+    getApiUrl(`/movies/${movieId}/videos`)
   );
 
   if (!response.ok) {
@@ -249,13 +262,16 @@ export async function getMovieWatchProviders(
   region: string = "IN"
 ): Promise<WatchProvidersResponse> {
   const response = await fetch(
-    `/api/movies/${movieId}/providers?region=${encodeURIComponent(region)}`
+    getApiUrl(
+      `/movies/${movieId}/providers?region=${encodeURIComponent(region)}`
+    )
   );
 
   if (!response.ok) {
-    throw new Error("Unable to fetch movie watch providers.");
+    throw new Error(
+      "Unable to fetch movie watch providers."
+    );
   }
 
   return response.json();
 }
-
